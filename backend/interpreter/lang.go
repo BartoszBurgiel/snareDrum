@@ -4,15 +4,14 @@ package interpreter
 // needed to execute a program
 type Lang struct {
 
+	// If all tokens are single character
+	SingleChard bool
+
 	// Move pointer up and down
 	Pointer struct {
 		Up   string
 		Down string
 	}
-
-	// Jump prefix is a prefix that comes before
-	// the pointer to a memory address
-	JumpPrefix string
 
 	// Input and output
 	IO struct {
@@ -22,12 +21,6 @@ type Lang struct {
 
 	// Single cell in a turing machine
 	Cell struct {
-
-		// Read the value from address
-		Read string
-
-		// Write the value to the cell
-		Write string
 
 		// Add n to the cell
 		Add string
