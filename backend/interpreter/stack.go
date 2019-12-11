@@ -14,6 +14,6 @@ type Stack struct {
 	// The current memory pointer
 	MemoryPointer Pointer
 
-	// All actions
-	Actions []Action
+	// All called functions
+	Register []func()
 }

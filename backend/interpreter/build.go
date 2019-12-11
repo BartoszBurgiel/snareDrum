@@ -10,7 +10,7 @@ func (s *Stack) Build(program string, lang Lang) {
 
 // build the program without formating
 func (s *Stack) buildSingeChard(program string, lang Lang) {
-	// Iterate over program
+	// Iterate over the program code
 	for _, token := range program {
 
 		// if isWhiteSpace -> skip
@@ -19,31 +19,40 @@ func (s *Stack) buildSingeChard(program string, lang Lang) {
 			// Check lang
 			switch token {
 				case lang.Pointer.Up:
-					s.MemoryPointer++
-					s.Cells.Number++
-					s.addEmptyCell()
+					s.increaseMemoryPointer()
+					
+					// Add to register
+					s.addAction(s.increaseMemoryPointer)
 					break
 				case lang.Pointer.Down:
-					s.MemoryPointer--
+					s.decreaseMemoryCell()
 
-					// Check if illegal pointer
-					if s.MemoryPointer < 0 {
-						fmt.Println("Illegal memory pointer of", 0)
-						return
-					}
+					// Add to register
+					s.addAction(s.decreaseMemoryPointer)
 					break
 				case lang.IO.In:
 					break
 				case lang.IO.Out:
 					s.printCell()
+
+					// Add to register
+					s.addAction(s.printCell)
 					break
 				case lang.Cell.Add:
 					s.addToCell()
+
+					// Add to register
+					s.addAction(s.addToCell)
 					break
 				case lang.Cell.Sub:
 					s.subFromCell()
+
+					// Add to register
+					s.addAction(s.subFromCell)
 					break
 				case lang.Loop.Start:
+					break
+				case lang.Loop.End:
 					break
 				default: 
 					fmt.Println("Unknown character", token)
