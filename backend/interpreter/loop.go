@@ -34,31 +34,29 @@ func (l *Loop) Decr() {
 // untill the end of the program
 func (l *Loop) trimCode(prog *string) string {
 	// Number of all loop openings -> all subloops
-	n_opening := 0
+	nOpening := 0
 
-	snipplet := []byte
+	snipplet := []byte{}
 
 	// Iterate over code
-	for _, token := range prog {
+	for _, token := range *prog {
 
 		// Detect levels
 		if token == l.Lang.Loop.Start {
-			n_opening++
+			nOpening++
 		} else if token == l.Lang.Loop.End {
 
-			// If on highest level 
-			if n_opening = 0 {
-				
+			// If on highest level
+			if nOpening == 0 {
+
 				// End
-				return snipplet
+				return string(snipplet)
 			}
-			n_opening--
+			nOpening--
 		}
 
-		snipplet = append(snipplet, token)
+		snipplet = append(snipplet, byte(token))
 	}
-}
 
-func (l *Loop) Build() {
-	l.Conditional = 
+	return ""
 }

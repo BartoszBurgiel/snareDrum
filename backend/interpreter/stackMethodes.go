@@ -3,48 +3,43 @@ package interpreter
 import "fmt"
 
 // Add one empty cell to the stack
-func (s *Stack) addEmptyCell() {
+func addEmptyCell(s *Stack) {
 	s.Cells.Cells = append(s.Cells.Cells, Cell{0})
 }
 
 // Increase value of the current cell by one
-func (s *Stack) addToCell() {
-	s.Cells.Cells[s.MemoryPointer]++
+func addToCell(s *Stack) {
+	s.Cells.Cells[s.MemoryPointer.Pos].Value++
 }
 
 // Decrease value of the current cell by one
-func (s *Stack) subFromCell() {
-	s.Cells.Cells[s.MemoryPointer]--
-}
-
-// Add action to the stack register
-func (s *Stack) addAction(f func()) {
-	s.Actions = append(s.Actions, a)
+func subFromCell(s *Stack) {
+	s.Cells.Cells[s.MemoryPointer.Pos].Value--
 }
 
 // Increase the memory pointer by one
 // if no cells -> create an empty cell
-func (s *Stack) increaseMemoryPointer() {
-	s.MemoryPointer++
+func increaseMemoryPointer(s *Stack) {
+	s.MemoryPointer.Pos++
 
 	// Check the cells number
-	if s.MemoryPointer > s.Cells.Number {
+	if s.MemoryPointer.Pos > s.Cells.Number {
 		s.Cells.Number++
-		s.addEmptyCell()
+		addEmptyCell(s)
 	}
 }
 
-func (s *Stack) decreaseMemoryPointer() {
-	s.MemoryPointer--
+func decreaseMemoryPointer(s *Stack) {
+	s.MemoryPointer.Pos--
 
 	// Check if illegal pointer
-	if s.MemoryPointer < 0 {
+	if s.MemoryPointer.Pos < 0 {
 		fmt.Println("Illegal memory pointer of", 0)
 		return
 	}
 }
 
 // Print the value of the current cell
-func (s *Stack) printCell() {
-	s.Cells.Cells[s.MemoryPointer].Print()
+func printCell(s *Stack) {
+	s.Cells.Cells[s.MemoryPointer.Pos].Print()
 }

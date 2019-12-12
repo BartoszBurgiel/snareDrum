@@ -15,5 +15,5 @@ type Stack struct {
 	MemoryPointer Pointer
 
 	// All called functions
-	Register []func()
+	Register Register
 }

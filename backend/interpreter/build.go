@@ -1,15 +1,27 @@
 package interpreter
 
-// Build stack based on the .sd file to 
+import (
+	"fmt"
+	"unicode"
+)
+
+// Build stack based on the .sd file to
 func (s *Stack) Build(program string, lang Lang) {
 	// Determine in what way the program should be built
 	if lang.SingleChard {
-		s.buildSingeChard(program, lang)
+		reg := buildSingeChardRegister(program, lang)
+		s.Register.Methods = append(s.Register.Methods, reg.Methods...)
 	}
 }
 
 // build the program without formating
-func (s *Stack) buildSingeChard(program string, lang Lang) {
+// from a given code (snipplet)
+// only assemble the register -> don't run
+// functions
+func buildSingeChardRegister(program string, lang Lang) Register {
+
+	out := Register{}
+
 	// Iterate over the program code
 	for _, token := range program {
 
@@ -18,49 +30,45 @@ func (s *Stack) buildSingeChard(program string, lang Lang) {
 
 			// Check lang
 			switch token {
-				case lang.Pointer.Up:
-					s.increaseMemoryPointer()
-					
-					// Add to register
-					s.addAction(s.increaseMemoryPointer)
-					break
-				case lang.Pointer.Down:
-					s.decreaseMemoryCell()
+			case lang.Pointer.Up.(rune):
 
-					// Add to register
-					s.addAction(s.decreaseMemoryPointer)
-					break
-				case lang.IO.In:
-					break
-				case lang.IO.Out:
-					s.printCell()
+				// Add to register
+				out.add(increaseMemoryPointer)
+				break
+			case lang.Pointer.Down.(rune):
 
-					// Add to register
-					s.addAction(s.printCell)
-					break
-				case lang.Cell.Add:
-					s.addToCell()
+				// Add to register
+				out.add(decreaseMemoryPointer)
+				break
+			case lang.IO.In.(rune):
+				break
+			case lang.IO.Out.(rune):
 
-					// Add to register
-					s.addAction(s.addToCell)
-					break
-				case lang.Cell.Sub:
-					s.subFromCell()
+				// Add to register
+				out.add(printCell)
+				break
+			case lang.Cell.Add.(rune):
 
-					// Add to register
-					s.addAction(s.subFromCell)
-					break
-				case lang.Loop.Start:
-					break
-				case lang.Loop.End:
-					break
-				default: 
-					fmt.Println("Unknown character", token)
-					return
-				} 
+				// Add to register
+				out.add(addToCell)
+				break
+			case lang.Cell.Sub.(rune):
+
+				// Add to register
+				out.add(subFromCell)
+				break
+			case lang.Loop.Start.(rune):
+				break
+			case lang.Loop.End.(rune):
+				break
+			default:
+				fmt.Println("Unknown character", token)
+				return Register{}
 			}
 		}
 	}
+
+	return out
 }
 
 // Check if given rune is whitespace
