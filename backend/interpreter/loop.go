@@ -2,29 +2,9 @@ package interpreter
 
 // Loop represents a loop on a program
 type Loop struct {
-	Conditional *Cell
 
 	// Lang for reference and code trimming
-	Lang     Lang
-	Register []func()
-}
-
-// Done returns if loop is done looping -> if conditional's value == 0
-func (l *Loop) Done() bool {
-	if l.Conditional.Value > 0 {
-		return false
-	}
-	return true
-}
-
-// Incr loops conditional by one
-func (l *Loop) Incr() {
-	l.Conditional.Incr()
-}
-
-// Decr loops conditional by one
-func (l *Loop) Decr() {
-	l.Conditional.Decr()
+	Lang Lang
 }
 
 // trimCode and leave only loop code
@@ -45,18 +25,70 @@ func (l *Loop) trimCode(prog *string) string {
 		if byte(token) == l.Lang.Loop.Start[0] {
 			nOpening++
 		} else if byte(token) == l.Lang.Loop.End[0] {
+			nOpening--
 
 			// If on highest level
 			if nOpening == 0 {
-
 				// End
 				return string(snipplet)
 			}
-			nOpening--
 		}
 
 		snipplet = append(snipplet, byte(token))
 	}
 
-	return ""
+	return "fail"
+}
+
+// Build the loop code snipplet
+func (l *Loop) Build(s *Stack, remCode *string) Register {
+
+	out := Register{}
+
+	// trim the code
+	code := l.trimCode(remCode)
+
+	// Produce functions untill condition value == 0
+	condition := getCell(s).Value
+
+	// Pointer of the cells' value
+	initPointerPosition := s.MemoryPointer.Pos
+
+	// Iterate
+	for condition >= 0 {
+
+		out.merge(buildSingeChardRegister(code, l.Lang, s))
+
+		// Decr condition
+		condition--
+
+		// Get current pointer position
+		currentPointerPosition := s.MemoryPointer.Pos
+
+		out.merge(pointerRetrack(initPointerPosition, currentPointerPosition))
+	}
+
+	return out
+}
+
+// Assemble register that retracts the pointer to the initial
+// poisiton
+func pointerRetrack(initPos, currPos int) Register {
+	out := Register{}
+
+	if initPos == currPos {
+		return out
+	} else if currPos > initPos {
+		for currPos > initPos {
+			out.add(decreaseMemoryPointer)
+			currPos--
+		}
+	} else if currPos < initPos {
+		for currPos < initPos {
+			out.add(increaseMemoryPointer)
+			currPos++
+		}
+	}
+
+	return out
 }

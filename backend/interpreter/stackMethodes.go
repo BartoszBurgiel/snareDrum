@@ -15,18 +15,18 @@ func addToCell(s *Stack) {
 		addEmptyCell(s)
 	}
 
-	s.Cells.Cells[s.MemoryPointer.Pos].Value++
+	s.Cells.Cells[s.MemoryPointer.Pos].Incr()
 }
 
 // Decrease value of the current cell by one
 func subFromCell(s *Stack) {
-	s.Cells.Cells[s.MemoryPointer.Pos].Value--
+	s.Cells.Cells[s.MemoryPointer.Pos].Decr()
 }
 
 // Increase the memory pointer by one
 // if no cells -> create an empty cell
 func increaseMemoryPointer(s *Stack) {
-	s.MemoryPointer.Pos++
+	s.MemoryPointer.Incr()
 
 	// Check the cells number
 	if s.MemoryPointer.Pos > s.Cells.Number {
@@ -35,8 +35,7 @@ func increaseMemoryPointer(s *Stack) {
 }
 
 func decreaseMemoryPointer(s *Stack) {
-	s.MemoryPointer.Pos--
-
+	s.MemoryPointer.Decr()
 	// Check if illegal pointer
 	if s.MemoryPointer.Pos < 0 {
 		fmt.Println("Illegal memory pointer of", 0)
@@ -47,4 +46,9 @@ func decreaseMemoryPointer(s *Stack) {
 // Print the value of the current cell
 func printCell(s *Stack) {
 	s.Cells.Cells[s.MemoryPointer.Pos].Print()
+}
+
+// Get cell the memory pointer is on currently
+func getCell(s *Stack) *Cell {
+	return &s.Cells.Cells[s.MemoryPointer.Pos]
 }
