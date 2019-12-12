@@ -17,3 +17,10 @@ type Stack struct {
 	// All called functions
 	Register Register
 }
+
+// Execute and call all functions of the register
+func (s Stack) Execute() {
+	for _, f := range s.Register.Methods {
+		f(&s)
+	}
+}

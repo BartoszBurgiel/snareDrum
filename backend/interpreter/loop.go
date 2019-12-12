@@ -42,9 +42,9 @@ func (l *Loop) trimCode(prog *string) string {
 	for _, token := range *prog {
 
 		// Detect levels
-		if token == l.Lang.Loop.Start {
+		if byte(token) == l.Lang.Loop.Start[0] {
 			nOpening++
-		} else if token == l.Lang.Loop.End {
+		} else if byte(token) == l.Lang.Loop.End[0] {
 
 			// If on highest level
 			if nOpening == 0 {

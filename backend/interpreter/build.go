@@ -28,38 +28,41 @@ func buildSingeChardRegister(program string, lang Lang) Register {
 		// if isWhiteSpace -> skip
 		if !isWhiteSpace(token) {
 
+			// Convert type
+			bToken := byte(token)
+
 			// Check lang
-			switch token {
-			case lang.Pointer.Up.(rune):
+			switch bToken {
+			case lang.Pointer.Up[0]:
 
 				// Add to register
 				out.add(increaseMemoryPointer)
 				break
-			case lang.Pointer.Down.(rune):
+			case lang.Pointer.Down[0]:
 
 				// Add to register
 				out.add(decreaseMemoryPointer)
 				break
-			case lang.IO.In.(rune):
+			case lang.IO.In[0]:
 				break
-			case lang.IO.Out.(rune):
+			case lang.IO.Out[0]:
 
 				// Add to register
 				out.add(printCell)
 				break
-			case lang.Cell.Add.(rune):
+			case lang.Cell.Add[0]:
 
 				// Add to register
 				out.add(addToCell)
 				break
-			case lang.Cell.Sub.(rune):
+			case lang.Cell.Sub[0]:
 
 				// Add to register
 				out.add(subFromCell)
 				break
-			case lang.Loop.Start.(rune):
+			case lang.Loop.Start[0]:
 				break
-			case lang.Loop.End.(rune):
+			case lang.Loop.End[0]:
 				break
 			default:
 				fmt.Println("Unknown character", token)

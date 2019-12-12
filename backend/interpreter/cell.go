@@ -19,5 +19,5 @@ func (c *Cell) Decr() {
 
 // Print the value of the cell
 func (c Cell) Print() {
-	fmt.Println(c.Value)
+	fmt.Println(string(c.Value))
 }

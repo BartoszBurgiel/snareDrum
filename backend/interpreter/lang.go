@@ -9,33 +9,33 @@ type Lang struct {
 
 	// Move pointer up and down
 	Pointer struct {
-		Up   interface{}
-		Down interface{}
+		Up   string
+		Down string
 	}
 
 	// Input and output
 	IO struct {
-		In  interface{}
-		Out interface{}
+		In  string
+		Out string
 	}
 
 	// Single cell in a turing machine
 	Cell struct {
 
 		// Add n to the cell
-		Add interface{}
+		Add string
 
 		// Subtract n from the cell
-		Sub interface{}
+		Sub string
 	}
 
 	// Loop
 	Loop struct {
 
 		// Token to begin loop
-		Start interface{}
+		Start string
 
 		// Token to end loop
-		End interface{}
+		End string
 	}
 }

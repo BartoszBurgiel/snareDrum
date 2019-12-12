@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	interpreter "snareDrum/backend/interpreter/core"
+	"snareDrum/backend/interpreter"
 )
 
 /*

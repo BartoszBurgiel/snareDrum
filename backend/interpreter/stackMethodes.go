@@ -5,10 +5,16 @@ import "fmt"
 // Add one empty cell to the stack
 func addEmptyCell(s *Stack) {
 	s.Cells.Cells = append(s.Cells.Cells, Cell{0})
+	s.Cells.Number++
 }
 
 // Increase value of the current cell by one
 func addToCell(s *Stack) {
+	// If pointer didn't move
+	if s.Cells.Number == 0 {
+		addEmptyCell(s)
+	}
+
 	s.Cells.Cells[s.MemoryPointer.Pos].Value++
 }
 
@@ -24,7 +30,6 @@ func increaseMemoryPointer(s *Stack) {
 
 	// Check the cells number
 	if s.MemoryPointer.Pos > s.Cells.Number {
-		s.Cells.Number++
 		addEmptyCell(s)
 	}
 }
