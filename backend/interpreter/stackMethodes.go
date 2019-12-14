@@ -29,7 +29,7 @@ func increaseMemoryPointer(s *Stack) {
 	s.MemoryPointer.Incr()
 
 	// Check the cells number
-	if s.MemoryPointer.Pos > s.Cells.Number {
+	if s.MemoryPointer.Pos >= s.Cells.Number {
 		addEmptyCell(s)
 	}
 }

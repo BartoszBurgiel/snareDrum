@@ -2,15 +2,16 @@ package interpreter
 
 import (
 	"fmt"
-	"unicode"
 )
 
 // Build stack based on the .sd file to
 func (s *Stack) Build(program string, lang Lang) {
 	// Determine in what way the program should be built
 	if lang.SingleChard {
-		buildSingeChardRegister(program, lang, s)
+		s.Register = buildSingeChardRegister(program, lang, s)
 	}
+
+	s.Dump()
 }
 
 // build the program without formating
@@ -22,16 +23,15 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 	out := Register{}
 
 	// Iterate over the program code
-	for n, token := range program {
+	for i := 0; i < len(program); i++ {
 
 		// if isWhiteSpace -> skip
-		if !isWhiteSpace(token) {
+		if !isWhiteSpace(program[i]) {
 
-			// Convert type
-			bToken := byte(token)
+			fmt.Println(program[i], "->", string(program[i]), ":", i, "lenp:", len(program))
 
 			// Check lang
-			switch bToken {
+			switch program[i] {
 			case lang.Pointer.Up[0]:
 				increaseMemoryPointer(s)
 
@@ -47,7 +47,7 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 			case lang.IO.In[0]:
 				break
 			case lang.IO.Out[0]:
-				printCell(s)
+				// printCell(s)
 
 				// Add to register
 				out.add(printCell)
@@ -66,20 +66,21 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 				break
 			case lang.Loop.Start[0]:
 
-				// trim the code ->
-				// pass only the remaining code
-				remainingCode := program[n:len(program)]
+				// Find out the length of the loop
+				length := loopLength(&program, lang.Loop.Start[0], lang.Loop.End[0])
 
-				// Innit loop
-				loop := Loop{
-					Lang: lang,
+				// Iterate untill > 1 -> last run will be
+				// executed on the main function
+				// -> no need to manipulate i
+				for getCell(s).Value > 1 {
+					out.merge(buildSingeChardRegister(program[i+1:length], lang, s))
 				}
 
-				out.merge(loop.Build(s, &remainingCode))
-
+				break
+			case lang.Loop.End[0]:
 				break
 			default:
-				fmt.Println("Unknown character", token)
+				fmt.Println("Unknown character", string(program[i]))
 				return Register{}
 			}
 		}
@@ -89,9 +90,35 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 }
 
 // Check if given rune is whitespace
-func isWhiteSpace(r rune) bool {
-	if r == '\t' || r == '\n' || unicode.IsSpace(r) {
+func isWhiteSpace(r byte) bool {
+	if r == '\t' || r == '\n' || r == ' ' {
 		return true
 	}
 	return false
+}
+
+// loopLength returns the length
+// of the loop -> from init [ to closing ]
+func loopLength(prog *string, lStart, lEnd byte) int {
+	// Number of all loop openings -> all subloops
+	nOpening := 0
+
+	// Iterate over code
+	for i, token := range *prog {
+
+		// Detect levels
+		if byte(token) == lStart {
+			nOpening++
+		} else if byte(token) == lEnd {
+			nOpening--
+
+			// If on highest level
+			if nOpening == 0 {
+				// End
+				return i
+			}
+		}
+	}
+
+	return 0
 }
