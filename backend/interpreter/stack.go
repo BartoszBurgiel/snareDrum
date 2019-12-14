@@ -57,6 +57,26 @@ func (s *Stack) Dump() {
 	s.MemoryPointer.Pos = 0
 }
 
+// Build stack based on the .sd file to
+func (s *Stack) Build(program string, lang Lang) {
+	// Determine in what way the program should be built
+	if lang.SingleChard {
+
+		// Delete whitespace
+		programNoWhitespace := removeWhitespace(program)
+
+		s.Register = buildSingeChardRegister(programNoWhitespace, lang, s)
+	} else {
+
+		// Divide to keywords
+		progSlice := sliceProgram(program)
+
+		s.Register = buildRegister(progSlice, lang, s)
+	}
+
+	s.Dump()
+}
+
 // Execute and call all functions of the register
 // And return the output of the program
 // and calls -> names of all called functions

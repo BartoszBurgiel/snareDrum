@@ -1,19 +1,5 @@
 package interpreter
 
-// Build stack based on the .sd file to
-func (s *Stack) Build(program string, lang Lang) {
-	// Determine in what way the program should be built
-	if lang.SingleChard {
-
-		// Delete whitespace
-		programNoWhitespace := removeWhitespace(program)
-
-		s.Register = buildSingeChardRegister(programNoWhitespace, lang, s)
-	}
-
-	s.Dump()
-}
-
 // build the program without formating
 // from a given code (snipplet)
 // only assemble the register -> don't run

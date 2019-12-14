@@ -1,0 +1,20 @@
+{
+    "_comment": "hgicht-lang setup",
+    "SingeChard": false,
+    "Pointer": {
+        "Up": "ein",
+        "Down": "Polizist"
+    },
+    "IO": {
+        "In": "mit",
+        "Out": "Laserschwert"
+    },
+    "Cell": {
+        "Add": "schreibt",
+        "Sub": "was"
+    },
+    "Loop": {
+        "Start": "auf",
+        "End": "ja"
+    }
+}

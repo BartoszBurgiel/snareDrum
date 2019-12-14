@@ -29,13 +29,13 @@ func main() {
 		}
 	}`))
 
-	fmt.Println(out)
+	//fmt.Println(out)
 
 	stack := interpreter.Stack{}
 
 	stack.New()
 
-	code, err := ioutil.ReadFile("../../other/example/test.sd")
+	code, err := ioutil.ReadFile("../../other/example/bartosz.sd")
 	if err != nil {
 		fmt.Println(err)
 		panic(err)
@@ -43,10 +43,29 @@ func main() {
 
 	stack.Build(string(code), out)
 
-	output, _ := stack.Execute()
+	//output, _ := stack.Execute()
 
 	// Print output
-	fmt.Println(output)
+	//fmt.Println(output)
 
-	fmt.Println(stack)
+	hgichtHeader, err := ioutil.ReadFile("../../other/example/hgicht/header.json")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	hgicht := reader.ReadHeader(hgichtHeader)
+
+	hgichtStack := interpreter.Stack{}
+	hgichtStack.New()
+
+	hgichtCode, err := ioutil.ReadFile("../../other/example/hgicht/hgicht.sd")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	hgichtStack.Build(string(hgichtCode), hgicht)
+
+	hgichtOut, _ := hgichtStack.Execute()
+
+	fmt.Println(hgichtOut)
 }
