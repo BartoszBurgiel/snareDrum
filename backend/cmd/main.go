@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/interpreter/reader"
 )
@@ -34,30 +35,18 @@ func main() {
 
 	stack.New()
 
-	//stack.Build(`+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-.`, out)
+	code, err := ioutil.ReadFile("../../other/example/test.sd")
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
 
-	// stack.Build(`+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-.`, out)
+	stack.Build(string(code), out)
 
-	stack.Build(`
-		+++++
-		[
-			>+++++ +++++ +++
-			< -
-		]
-		>.
-		>>
-		+++++
-		[
-			>+++++ +++++ ++++
-			< -
-		]
-		>.
-		`, out)
+	output, _ := stack.Execute()
+
+	// Print output
+	fmt.Println(output)
 
 	fmt.Println(stack)
-
-	stack.Execute()
-
-	fmt.Println(stack)
-
 }

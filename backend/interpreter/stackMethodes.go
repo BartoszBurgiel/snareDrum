@@ -43,7 +43,7 @@ func decreaseMemoryPointer(s *Stack) int {
 	s.MemoryPointer.Decr()
 	// Check if illegal pointer
 	if s.MemoryPointer.Pos < 0 {
-		fmt.Println("Illegal memory pointer of", 0)
+		fmt.Println("Illegal memory pointer of", s.MemoryPointer.Pos)
 		return 0
 	}
 	return 0

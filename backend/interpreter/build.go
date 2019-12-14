@@ -1,9 +1,5 @@
 package interpreter
 
-import (
-	"fmt"
-)
-
 // Build stack based on the .sd file to
 func (s *Stack) Build(program string, lang Lang) {
 	// Determine in what way the program should be built
@@ -32,7 +28,7 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 		// if isWhiteSpace -> skip
 		if !isWhiteSpace(program[i]) {
 
-			fmt.Println(program[i], "->", string(program[i]), ":", i, "lenp:", len(program))
+			// fmt.Println(program[i], "->", string(program[i]), ":", i, "lenp:", len(program))
 
 			// Check lang
 			switch program[i] {
@@ -84,8 +80,7 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 			case lang.Loop.End[0]:
 				break
 			default:
-				fmt.Println("Unknown character", string(program[i]))
-				return Register{}
+				break
 			}
 		}
 	}

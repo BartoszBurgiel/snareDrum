@@ -1,9 +1,9 @@
 package interpreter
 
 import (
-	"fmt"
 	"reflect"
 	"runtime"
+	"strings"
 )
 
 // Stack struct represents a stack with all actions of a program and their order
@@ -58,21 +58,27 @@ func (s *Stack) Dump() {
 }
 
 // Execute and call all functions of the register
-func (s *Stack) Execute() {
-	output := []byte{}
+// And return the output of the program
+// and calls -> names of all called functions
+func (s *Stack) Execute() (output string, funcCalls []string) {
 
 	for _, f := range s.Register.Methods {
+
+		// Get the name of the function
+		function := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
+
+		// Format name of the function
+		functionFormatted := strings.SplitAfter(function, ".")
+
 		// Print the name of the function
-		fmt.Println(runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name())
+		funcCalls = append(funcCalls, functionFormatted[1])
 
 		// Call function anf get the value
 		v := f(s)
 
 		// Add to output
-		output = append(output, byte(v))
+		output += string(byte(v))
 	}
 
-	// Print output
-	fmt.Println(string(output))
-
+	return output, funcCalls
 }
