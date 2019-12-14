@@ -8,7 +8,11 @@ import (
 func (s *Stack) Build(program string, lang Lang) {
 	// Determine in what way the program should be built
 	if lang.SingleChard {
-		s.Register = buildSingeChardRegister(program, lang, s)
+
+		// Delete whitespace
+		programNoWhitespace := removeWhitespace(program)
+
+		s.Register = buildSingeChardRegister(programNoWhitespace, lang, s)
 	}
 
 	s.Dump()
@@ -67,13 +71,13 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 			case lang.Loop.Start[0]:
 
 				// Find out the length of the loop
-				length := loopLength(&program, lang.Loop.Start[0], lang.Loop.End[0])
+				length := loopLength(program[i:len(program)], lang.Loop.Start[0], lang.Loop.End[0])
 
 				// Iterate untill > 1 -> last run will be
 				// executed on the main function
 				// -> no need to manipulate i
 				for getCell(s).Value > 1 {
-					out.merge(buildSingeChardRegister(program[i+1:length], lang, s))
+					out.merge(buildSingeChardRegister(program[i+1:i+length], lang, s))
 				}
 
 				break
@@ -99,12 +103,12 @@ func isWhiteSpace(r byte) bool {
 
 // loopLength returns the length
 // of the loop -> from init [ to closing ]
-func loopLength(prog *string, lStart, lEnd byte) int {
+func loopLength(prog string, lStart, lEnd byte) int {
 	// Number of all loop openings -> all subloops
 	nOpening := 0
 
 	// Iterate over code
-	for i, token := range *prog {
+	for i, token := range prog {
 
 		// Detect levels
 		if byte(token) == lStart {
@@ -121,4 +125,19 @@ func loopLength(prog *string, lStart, lEnd byte) int {
 	}
 
 	return 0
+}
+
+// delete all whitespace
+// from program
+func removeWhitespace(program string) string {
+	out := ""
+
+	for _, c := range program {
+		// if not whitespace -> add to out
+		if !isWhiteSpace(byte(c)) {
+			out += string(c)
+		}
+	}
+
+	return out
 }

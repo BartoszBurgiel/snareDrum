@@ -40,7 +40,7 @@ func (s *Stack) New() {
 			Pos: 0,
 		},
 		Register: Register{
-			Methods: []func(s *Stack){},
+			Methods: []func(s *Stack) int{},
 		},
 	}
 
@@ -59,11 +59,20 @@ func (s *Stack) Dump() {
 
 // Execute and call all functions of the register
 func (s *Stack) Execute() {
+	output := []byte{}
+
 	for _, f := range s.Register.Methods {
 		// Print the name of the function
 		fmt.Println(runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name())
 
-		// Call function
-		f(s)
+		// Call function anf get the value
+		v := f(s)
+
+		// Add to output
+		output = append(output, byte(v))
 	}
+
+	// Print output
+	fmt.Println(string(output))
+
 }
