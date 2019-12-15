@@ -57,6 +57,13 @@ func (s *Stack) Dump() {
 	s.MemoryPointer.Pos = 0
 }
 
+// Clear the whole stack -> delete all cells
+// and functions
+func (s *Stack) Clear() {
+	s.Dump()
+	s.Register.Methods = nil
+}
+
 // Build stack based on the .sd file to
 func (s *Stack) Build(program string, lang Lang) {
 	// Determine in what way the program should be built

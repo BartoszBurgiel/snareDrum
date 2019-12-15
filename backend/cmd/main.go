@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/interpreter/reader"
 )
@@ -43,10 +44,10 @@ func main() {
 
 	stack.Build(string(code), out)
 
-	//output, _ := stack.Execute()
+	output, _ := stack.Execute()
 
-	// Print output
-	//fmt.Println(output)
+	//Print output
+	fmt.Println(output)
 
 	hgichtHeader, err := ioutil.ReadFile("../../other/example/hgicht/header.json")
 	if err != nil {
@@ -68,4 +69,20 @@ func main() {
 	hgichtOut, _ := hgichtStack.Execute()
 
 	fmt.Println(hgichtOut)
+
+	hgichtGenerated := generator.Generate(hgicht, "Ich habe ein Programm geschrieben, der Programme schreibt :D")
+
+	err = ioutil.WriteFile("../../other/example/hgicht/hgichtGen.sd", []byte(hgichtGenerated), 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// test
+	stack.Clear()
+
+	stack.Build(hgichtGenerated, hgicht)
+
+	outputAleksandra, _ := stack.Execute()
+
+	fmt.Println(outputAleksandra)
 }
