@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"snareDrum/backend/interpreter"
 )
 
@@ -10,6 +11,17 @@ func Generate(lang interpreter.Lang, progOutput string) string {
 	out := ""
 
 	for i := 0; i < len(progOutput); i++ {
+		// Optimazation variables
+		nextCharSame := false
+
+		// 21 so it's not detected by default by the algorithm
+		charDiff := 21
+
+		// Add value to cell without the loop
+		manuallyAddToCell := false
+
+		// Adjust value to cell by... -> true -> add to cell; false -> sub from cell
+		addToCell := false
 
 		// claculate walkerLoop value
 		iterations, incrPI, leftover := calcWalkerLoop(getASCIIValue(progOutput[i]))
@@ -28,9 +40,64 @@ func Generate(lang interpreter.Lang, progOutput string) string {
 			}
 		}
 
+		// if next char is same -> print again and incr i
+
+		if i < len(progOutput)-1 {
+			if progOutput[i] == progOutput[i+1] {
+				nextCharSame = true
+			} else {
+
+				// Calculate the difference between current and next char
+				charDiff = getASCIIValue(progOutput[i]) - getASCIIValue(progOutput[i+1])
+
+				fmt.Println(charDiff, "->", progOutput[i], ":", progOutput[i+1])
+
+				// Check if absolute difference < 15
+				if abs(charDiff) < 15 {
+
+					// Activate manual adjustment of the cell
+					manuallyAddToCell = true
+
+					// Calculate the "direction" of the adjustment
+					if charDiff < 0 {
+						addToCell = true
+					}
+				}
+			}
+		}
+
 		// Print value
 		out += lang.IO.Out
 		out += whiteSpace(lang)
+
+		// If next char is same -> print again
+		if nextCharSame {
+			// Print value
+			out += lang.IO.Out
+			out += whiteSpace(lang)
+
+			// Jump to the next char
+			i++
+		} else if manuallyAddToCell {
+			if addToCell {
+				for j := 0; j < -charDiff; j++ {
+					out += lang.Cell.Add
+					out += whiteSpace(lang)
+				}
+			} else {
+				for j := 0; j < charDiff; j++ {
+					out += lang.Cell.Sub
+					out += whiteSpace(lang)
+				}
+			}
+
+			// Print value
+			out += lang.IO.Out
+			out += whiteSpace(lang)
+
+			// Jump to the next char
+			i++
+		}
 
 		// Move pointer up
 		out += lang.Pointer.Up
