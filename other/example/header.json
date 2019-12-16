@@ -1,6 +1,6 @@
 {
     "_comment": "Brainfuck lang setup",
-    "SingeChard": true,
+    "SingleChard": true,
     "Pointer": {
         "Up": ">",
         "Down": "<"

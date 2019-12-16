@@ -20,10 +20,12 @@ func Generate(lang interpreter.Lang, progOutput string) string {
 
 		// Write the walker loop to get to a certain value
 		out += walkerLoopAdd(iterations, incrPI, lang)
-
 		out += handleLeftoverAdd(leftover, lang)
 
+		// If next char valid
 		if i < len(progOutput)-1 {
+
+			// Calculate optimation
 			nextCharSame, manuallyAddToCell, addToCell, charDiff = isSameOrWithinRange(progOutput[i], progOutput[i+1], 20)
 		}
 
@@ -36,12 +38,10 @@ func Generate(lang interpreter.Lang, progOutput string) string {
 			out += reprint(lang)
 			// Jump to the next char
 			i++
-		} else if manuallyAddToCell {
 
+		} else if manuallyAddToCell {
 			out += adjustCellValue(addToCell, charDiff, lang)
 			out += reprint(lang)
-
-			// Jump to the next char
 			i++
 		}
 

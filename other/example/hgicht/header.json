@@ -1,6 +1,6 @@
 {
     "_comment": "hgicht-lang setup",
-    "SingeChard": false,
+    "SingleChard": false,
     "Pointer": {
         "Up": "ein",
         "Down": "Polizist"
