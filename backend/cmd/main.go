@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"snareDrum/backend/compiler"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/interpreter/reader"
 )
@@ -26,9 +27,15 @@ func main() {
 
 	bfStack.Build(string(bfCode), bfLang)
 
-	_, funcCalls := bfStack.Execute()
+	compiled := compiler.Compile(bfStack)
 
-	for _, ffff := range funcCalls {
-		fmt.Println(ffff)
+	err = ioutil.WriteFile("compiled.sdexe", compiled, 0644)
+	if err != nil {
+		fmt.Println(err)
 	}
+
+	log := compiler.Execute(compiled)
+
+	fmt.Println(log)
+
 }

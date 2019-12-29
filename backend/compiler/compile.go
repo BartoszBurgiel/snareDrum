@@ -50,7 +50,11 @@ func tokenize(code []byte) [][]byte {
 
 	// Iterate over code
 	for _, b := range code {
-		if ind == 3 {
+
+		tempToken = append(tempToken, b)
+		ind++
+
+		if ind == 4 {
 			// reset index
 			ind = 0
 
@@ -59,10 +63,6 @@ func tokenize(code []byte) [][]byte {
 
 			// reset temptoken
 			tempToken = []byte{}
-
-		} else {
-			tempToken = append(tempToken, b)
-			ind++
 		}
 
 	}
