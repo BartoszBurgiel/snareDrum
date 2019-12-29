@@ -3,39 +3,32 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/interpreter/reader"
 )
 
 func main() {
 
-	hgichtHeader, err := ioutil.ReadFile("../../other/example/hgicht/header.json")
+	bfHeader, err := ioutil.ReadFile("../../other/example/hgicht/header.json")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	hgicht := reader.ReadHeader(hgichtHeader)
+	bfLang := reader.ReadHeader(bfHeader)
 
-	hgichtStack := interpreter.Stack{}
-	hgichtStack.New()
+	bfStack := interpreter.Stack{}
+	bfStack.New()
 
-	hgichtGenerated := generator.Generate(hgicht, "Ich habe ein Programm geschrieben, der Programme schreibt :D")
-
-	err = ioutil.WriteFile("../../other/example/hgicht/hgichtGen.sd", []byte(hgichtGenerated), 0644)
+	bfCode, err := ioutil.ReadFile("../../other/example/hgicht/hgichtGen.sd")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	// test
-	hgichtStack.Clear()
+	bfStack.Build(string(bfCode), bfLang)
 
-	hgichtStack.Build(hgichtGenerated, hgicht)
+	_, funcCalls := bfStack.Execute()
 
-	outputAleksandra, _ := hgichtStack.Execute()
-
-	debug := hgichtStack.Debug()
-
-	fmt.Println(debug)
-	fmt.Println(outputAleksandra)
+	for _, ffff := range funcCalls {
+		fmt.Println(ffff)
+	}
 }

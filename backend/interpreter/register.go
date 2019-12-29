@@ -12,6 +12,11 @@ func (r *Register) add(f func(s *Stack) int) {
 	r.Methods = append(r.Methods, f)
 }
 
+// Add a function to the register
+func (r *Register) Add(f func(s *Stack) int) {
+	r.Methods = append(r.Methods, f)
+}
+
 // merge two register structs
 func (r *Register) merge(newR Register) {
 	// iterate over newR

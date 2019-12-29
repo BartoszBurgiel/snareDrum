@@ -91,14 +91,8 @@ func (s *Stack) Execute() (output string, funcCalls []string) {
 
 	for _, f := range s.Register.Methods {
 
-		// Get the name of the function
-		function := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
-
-		// Format name of the function
-		functionFormatted := strings.SplitAfter(function, ".")
-
 		// Print the name of the function
-		funcCalls = append(funcCalls, functionFormatted[1])
+		funcCalls = append(funcCalls, FormatFunctionName(f))
 
 		// Call function anf get the value
 		v := f(s)
@@ -108,4 +102,14 @@ func (s *Stack) Execute() (output string, funcCalls []string) {
 	}
 
 	return output, funcCalls
+}
+
+// FormatFunctionName and return it as string
+func FormatFunctionName(f func(s *Stack) int) string {
+	// Get the name of the function
+	function := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
+
+	// Format name of the function
+	functionFormatted := strings.SplitAfter(function, ".")
+	return functionFormatted[1]
 }
