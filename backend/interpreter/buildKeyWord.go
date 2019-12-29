@@ -14,16 +14,16 @@ func buildRegister(program []string, lang Lang, s *Stack) Register {
 		// Check lang
 		switch program[i] {
 		case lang.Pointer.Up:
-			increaseMemoryPointer(s)
+			IncreaseMemoryPointer(s)
 
 			// Add to register
-			out.add(increaseMemoryPointer)
+			out.add(IncreaseMemoryPointer)
 			break
 		case lang.Pointer.Down:
-			decreaseMemoryPointer(s)
+			DecreaseMemoryPointer(s)
 
 			// Add to register
-			out.add(decreaseMemoryPointer)
+			out.add(DecreaseMemoryPointer)
 			break
 		case lang.IO.In:
 			break
@@ -31,19 +31,19 @@ func buildRegister(program []string, lang Lang, s *Stack) Register {
 			// printCell(s)
 
 			// Add to register
-			out.add(printCell)
+			out.add(PrintCell)
 			break
 		case lang.Cell.Add:
-			addToCell(s)
+			AddToCell(s)
 
 			// Add to register
-			out.add(addToCell)
+			out.add(AddToCell)
 			break
 		case lang.Cell.Sub:
-			subFromCell(s)
+			SubFromCell(s)
 
 			// Add to register
-			out.add(subFromCell)
+			out.add(SubFromCell)
 			break
 		case lang.Loop.Start:
 
