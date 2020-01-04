@@ -12,10 +12,10 @@ SnareDrum is a program helping users to understand the concept of a turing machi
 ## How tos
 
 ### Console commands 
-* **build** `<path-to-project>`: write out binary file 
-* **debug** `<path-to-project>`: print the entire stack 
-* **exec** `<path-to-project/binary>`: execute binary/sd project file 
-* **generate** `<path-to-lang> <text>`: generate program in given lang printing following text
+* `build <path-to-project>`: write out binary file 
+* `debug <path-to-project>`: print the entire stack 
+* `exec <path-to-project/binary>`: execute binary/sd project file 
+* `generate <path-to-lang> <text>`: generate program in given lang printing following text
 
 
 ### SnareDrum project file structure
