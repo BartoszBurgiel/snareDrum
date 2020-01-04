@@ -4,8 +4,8 @@ SnareDrum is a program helping users to understand the concept of a turing machi
 #### With SnareDrum you can: 
 * **Run** a program in **your own programming language**
 * **Compile** your program into a binary file that can be executed later
-* **Debug** your code by printing all of the stack as a table 
-* "**Translate**" any text into an executable program (binary, or source code in **your** language)
+* **Debug** your code by printing the whole stack (band from the turing machine) as a table 
+* "**Translate**" any text into an executable program (binary, or source code in **your own** language)
 
 </br>
 
@@ -86,6 +86,7 @@ After installing golang on your machine:
 * Clone this repository 
     * ``git clone https://github.com/BartoszBurgiel/snareDrum``
 * Build the program 
-    * ``go build -o snareDrum/backend/cmd/main.go <name-of-the-executable>``
+    * ``go build -o backend/cmd/main.go <name-of-the-executable>``
+    * Alternatively you could always run the program manually ``go run backend/cmd/main.go``
 * Have fun! 
     * ``./snareDrum.deb exec fibonacci.sdexe``
