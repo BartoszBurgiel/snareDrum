@@ -1,2 +1,6 @@
 other/example/
 *.sdexe
+*.sd
+*.xd
+backend/cmd/test/
+backend/server/
