@@ -72,8 +72,9 @@ func walkerLoopAdd(iterations, increasementPI int, lang interpreter.Lang) string
 	}
 
 	// Initialize loop
-	out += lang.Loop.Start
 	out += "\n"
+	out += lang.Loop.Start
+	out += "\n\t"
 
 	// Fill next cell
 	out += lang.Pointer.Up
@@ -90,6 +91,7 @@ func walkerLoopAdd(iterations, increasementPI int, lang interpreter.Lang) string
 	out += whiteSpace(lang)
 
 	// Close loop
+	out += "\n"
 	out += lang.Loop.End
 	out += "\n"
 

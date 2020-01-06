@@ -5,12 +5,13 @@ import (
 )
 
 // Compile the register of the stack to binary
-func Compile(s interpreter.Stack) []byte {
+func Compile(s interpreter.Stack, progress *int) []byte {
 
 	out := []byte{}
 
 	// Iterate over stack's register
-	for _, fun := range s.Register.Methods {
+	for i, fun := range s.Register.Methods {
+		*progress = i
 		out = append(out, FunctionToBinary(fun)...)
 	}
 

@@ -2,5 +2,7 @@ other/example/
 *.sdexe
 *.sd
 *.xd
+*.txt
+*.json
 backend/cmd/test/
 backend/server/

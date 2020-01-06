@@ -4,13 +4,13 @@ package interpreter
 // from a given code (snipplet)
 // only assemble the register -> don't run
 // functions
-func buildRegister(program []string, lang Lang, s *Stack) Register {
+func buildRegister(program []string, lang Lang, s *Stack, progress *int) Register {
 
 	out := Register{}
 
 	// Iterate over the program code
 	for i := 0; i < len(program); i++ {
-
+		*progress++
 		// Check lang
 		switch program[i] {
 		case lang.Pointer.Up:
@@ -54,7 +54,7 @@ func buildRegister(program []string, lang Lang, s *Stack) Register {
 			// executed on the main function
 			// -> no need to manipulate i
 			for getCell(s).Value > 1 {
-				out.merge(buildRegister(program[i+1:i+length], lang, s))
+				out.merge(buildRegister(program[i+1:i+length], lang, s, progress))
 			}
 
 			break

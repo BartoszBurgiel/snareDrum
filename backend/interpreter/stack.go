@@ -64,21 +64,18 @@ func (s *Stack) Clear() {
 	s.Register.Methods = nil
 }
 
-// Build stack based on the .sd file to
-func (s *Stack) Build(program string, lang Lang) {
+// Build stack based on the .sd file
+func (s *Stack) Build(lang Lang, program string, progress *int) {
 	// Determine in what way the program should be built
 	if lang.SingleChard {
 
-		// Delete whitespace
-		programNoWhitespace := removeWhitespace(program)
-
-		s.Register = buildSingeChardRegister(programNoWhitespace, lang, s)
+		s.Register = buildSingeChardRegister(program, lang, s, progress)
 	} else {
 
 		// Divide to keywords
 		progSlice := sliceProgram(program)
 
-		s.Register = buildRegister(progSlice, lang, s)
+		s.Register = buildRegister(progSlice, lang, s, progress)
 	}
 
 	s.Dump()

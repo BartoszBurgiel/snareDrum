@@ -4,17 +4,14 @@ package interpreter
 // from a given code (snipplet)
 // only assemble the register -> don't run
 // functions
-func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
-
+func buildSingeChardRegister(program string, lang Lang, s *Stack, progress *int) Register {
 	out := Register{}
 
 	// Iterate over the program code
 	for i := 0; i < len(program); i++ {
-
+		*progress = i
 		// if isWhiteSpace -> skip
 		if !isWhiteSpace(program[i]) {
-
-			// fmt.Println(program[i], "->", string(program[i]), ":", i, "lenp:", len(program))
 
 			// Check lang
 			switch program[i] {
@@ -59,7 +56,7 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack) Register {
 				// executed on the main function
 				// -> no need to manipulate i
 				for getCell(s).Value > 1 {
-					out.merge(buildSingeChardRegister(program[i+1:i+length], lang, s))
+					out.merge(buildSingeChardRegister(program[i+1:i+length], lang, s, progress))
 				}
 
 				break
@@ -106,19 +103,4 @@ func loopLength(prog string, lStart, lEnd byte) int {
 	}
 
 	return 0
-}
-
-// delete all whitespace
-// from program
-func removeWhitespace(program string) string {
-	out := ""
-
-	for _, c := range program {
-		// if not whitespace -> add to out
-		if !isWhiteSpace(byte(c)) {
-			out += string(c)
-		}
-	}
-
-	return out
 }

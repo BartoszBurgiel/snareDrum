@@ -16,6 +16,7 @@ SnareDrum is a program helping users to understand the concept of a turing machi
 * `debug <path-to-project>`: print the entire stack 
 * `exec <path-to-project/binary>`: execute binary/sd project file 
 * `generate <path-to-lang> <text>`: generate program in given lang printing following text
+* `translate-file <path-to-lang> <path-to-file>`: generate program in given lang printing contents of a given file
 
 
 ### SnareDrum project file structure

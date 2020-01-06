@@ -8,17 +8,15 @@ import (
 	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/project"
+	"snareDrum/backend/ui"
 	"strings"
 )
 
 func main() {
 
-	fmt.Println("ARGS", os.Args)
-
 	// Get args
 	args := os.Args[1:]
 
-	fmt.Println("args", args)
 	// Which action shall be performed
 	action := args[0]
 
@@ -30,7 +28,9 @@ func main() {
 		stack := buildStackFromProject(path)
 
 		// Compile to binary
-		bin := compiler.Compile(stack)
+		progress := 0
+		go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
+		bin := compiler.Compile(stack, &progress)
 
 		// Write off
 		writeOff(path, bin)
@@ -83,16 +83,47 @@ func main() {
 		// Get text to translate
 		text := argExists(args, 2)
 
-		// Generate code
-		code := generator.Generate(lang, text)
+		// Set off generator and the goroutine and track progress
+		progress := 0
+		go ui.ProgressBar(&progress, len(text), "Generating")
+		code := generator.Generate(lang, text, &progress)
 
+		// Write to file
 		err := ioutil.WriteFile("GEN.sd", []byte(code), 0644)
 		if err != nil {
 			fmt.Println(err)
 		}
 		break
+	case "translate-file":
+		path := argExists(args, 1)
+
+		// Check Lang
+		if err := project.ValidateLang(path); err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		// Get lang
+		lang := project.GetLang(path)
+
+		// Get text to translate
+		pathToText := argExists(args, 2)
+
+		// Get content
+		content, err := ioutil.ReadFile(pathToText)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(0)
+		}
+
+		// Generate code
+		progress := 0
+		go ui.ProgressBar(&progress, len(content), "Translating")
+		generator.GenerateFile(lang, string(content), &progress)
+		break
+
 	default:
-		fmt.Printf("Unknown argument %s", action)
+		fmt.Printf("Unknown argument '%s'", action)
 	}
 
 	// Terminate program after all actions
@@ -137,7 +168,10 @@ func buildStackFromProject(path string) interpreter.Stack {
 	// Build the stack
 	stack := interpreter.Stack{}
 	stack.New()
-	stack.Build(string(code), lang)
+
+	progress := 0
+	go ui.ProgressBar(&progress, len(code), "Building")
+	stack.Build(lang, string(code), &progress)
 
 	return stack
 }
