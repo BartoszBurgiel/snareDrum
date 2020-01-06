@@ -2,8 +2,10 @@ package interpreter
 
 import (
 	"bytes"
+	"fmt"
 	"reflect"
 	"runtime"
+	"snareDrum/backend/ui"
 	"strings"
 )
 
@@ -66,11 +68,12 @@ func (s *Stack) Clear() {
 }
 
 // Build stack based on the .sd file
-func (s *Stack) Build(lang Lang, program string, progress *int) {
+func (s *Stack) Build(lang Lang, program string) {
 
+	fmt.Println("Building...")
 	progSlice := DivideProgram(lang, program)
 
-	s.Register = BuildRegister(progSlice, lang, s, progress)
+	s.Register = BuildRegister(progSlice, lang, s)
 
 	s.Dump()
 }
@@ -79,8 +82,11 @@ func (s *Stack) Build(lang Lang, program string, progress *int) {
 // And return the output of the program
 // and calls -> names of all called functions
 func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
+	output = &bytes.Buffer{}
+	max := len(s.Register.Methods)
 
-	for _, f := range s.Register.Methods {
+	fmt.Println("Executing...")
+	for i, f := range s.Register.Methods {
 
 		// Print the name of the function
 		funcCalls = append(funcCalls, FormatFunctionName(f))
@@ -90,6 +96,7 @@ func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 
 		// Add to output
 		output.WriteByte(byte(v))
+		ui.PrintProgressBar(i, max)
 	}
 
 	return output, funcCalls

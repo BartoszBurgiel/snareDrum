@@ -9,7 +9,6 @@ import (
 	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/project"
-	"snareDrum/backend/ui"
 	"strings"
 	"time"
 )
@@ -31,7 +30,7 @@ func main() {
 
 		// Compile and write off
 		progress := 0
-		go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
+		// go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
 		compiler.CompileAndWrite(stack, path, &progress)
 
 		// Sleep and give let the progress bar finnish
@@ -89,7 +88,7 @@ func main() {
 
 		// Set off generator and the goroutine and track progress
 		progress := 0
-		go ui.ProgressBar(&progress, len(text), "Generating")
+		// go ui.ProgressBar(&progress, len(text), "Generating")
 		generator.GenerateFile(lang, []byte(text), &progress)
 		break
 	case "translate-file":
@@ -116,8 +115,9 @@ func main() {
 
 		// Generate code
 		progress := 0
-		go ui.ProgressBar(&progress, int(len(content)/1000), "Translating")
+		// go ui.ProgressBar(&progress, int(len(content)/1000), "Translating")
 		// generator.GenerateFile(lang, content, &progress)
+		fmt.Println("Translating...")
 		concurrency.RunTranslate(generator.Generate, lang, string(content), &progress)
 		break
 
@@ -168,12 +168,10 @@ func buildStackFromProject(path string) interpreter.Stack {
 	stack := interpreter.Stack{}
 	stack.New()
 
-	progress := 0
-	go ui.ProgressBar(&progress, len(code), "Building")
-	stack.Build(lang, string(code), &progress)
+	// go ui.ProgressBar(&progress, len(code), "Building")
+	stack.Build(lang, string(code))
 
 	// Sleep and give the progress bar time to complete
-	time.Sleep(1000)
 
 	return stack
 }

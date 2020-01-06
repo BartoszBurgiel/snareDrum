@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-// printProgressBar returns string with a progress bar in ascii with the progress in %
-func printProgressBar(curr, max int) string {
+// PrintProgressBar returns string with a progress bar in ascii with the progress in %
+func PrintProgressBar(curr, max int) {
 	out := "["
 
 	// Map ratio of curr to max to width
@@ -20,31 +20,6 @@ func printProgressBar(curr, max int) string {
 	out += "]"
 	out += fmt.Sprintf("%d%% (%d/%d)", int(100*(float64(curr)/float64(max))), curr, max)
 
-	return out
-}
+	fmt.Printf("%s\r", out)
 
-// ProgressBar runs the progress bar function
-// and generator from snaredrum concurrently
-func ProgressBar(progress *int, max int, keyword string) {
-
-	// Prepare wait group
-	fmt.Println("\n", keyword, "...")
-
-	// Fire goroutine for the progress bar
-
-	tempProgress := 1
-
-	fmt.Printf("%s\r", printProgressBar(0, max))
-
-	// Listen to the pointer
-	for {
-		// Check if progress changed
-		if tempProgress != *progress {
-			// Reassign progress
-			tempProgress = *progress
-
-			// Print progress bar
-			fmt.Printf("%s\r", printProgressBar(*progress, max))
-		}
-	}
 }
