@@ -28,7 +28,7 @@ func printProgressBar(curr, max int) string {
 func ProgressBar(progress *int, max int, keyword string) {
 
 	// Prepare wait group
-	fmt.Println(keyword, "...")
+	fmt.Println("\n", keyword, "...")
 
 	// Fire goroutine for the progress bar
 
@@ -44,11 +44,7 @@ func ProgressBar(progress *int, max int, keyword string) {
 			tempProgress = *progress
 
 			// Print progress bar
-			fmt.Printf("%s\r", printProgressBar(tempProgress, max))
-		}
-
-		if *progress == max {
-			return
+			fmt.Printf("%s\r", printProgressBar(*progress, max))
 		}
 	}
 }

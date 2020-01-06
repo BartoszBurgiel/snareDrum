@@ -9,7 +9,7 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack, progress *int)
 
 	// Iterate over the program code
 	for i := 0; i < len(program); i++ {
-		*progress = i
+		*progress++
 		// if isWhiteSpace -> skip
 		if !isWhiteSpace(program[i]) {
 
@@ -52,11 +52,13 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack, progress *int)
 				// Find out the length of the loop
 				length := loopLength(program[i:len(program)], lang.Loop.Start[0], lang.Loop.End[0])
 
+				// Dummy progress for not overrunning the actual progress
+				dummyProg := 0
 				// Iterate untill > 1 -> last run will be
 				// executed on the main function
 				// -> no need to manipulate i
 				for getCell(s).Value > 1 {
-					out.merge(buildSingeChardRegister(program[i+1:i+length], lang, s, progress))
+					out.merge(buildSingeChardRegister(program[i+1:i+length], lang, s, &dummyProg))
 				}
 
 				break
@@ -67,7 +69,6 @@ func buildSingeChardRegister(program string, lang Lang, s *Stack, progress *int)
 			}
 		}
 	}
-
 	return out
 }
 

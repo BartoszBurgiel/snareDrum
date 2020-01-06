@@ -10,8 +10,8 @@ func Compile(s interpreter.Stack, progress *int) []byte {
 	out := []byte{}
 
 	// Iterate over stack's register
-	for i, fun := range s.Register.Methods {
-		*progress = i
+	for _, fun := range s.Register.Methods {
+		*progress++
 		out = append(out, FunctionToBinary(fun)...)
 	}
 

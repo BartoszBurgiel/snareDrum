@@ -10,6 +10,7 @@ import (
 	"snareDrum/backend/project"
 	"snareDrum/backend/ui"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -22,12 +23,11 @@ func main() {
 
 	switch action {
 	case "build":
-
 		path := argExists(args, 1)
 
+		// Build stack
 		stack := buildStackFromProject(path)
 
-		// Compile to binary
 		progress := 0
 		go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
 		bin := compiler.Compile(stack, &progress)
@@ -40,7 +40,7 @@ func main() {
 		stack := buildStackFromProject(path)
 		stack.Execute()
 
-		fmt.Println(stack.Debug())
+		fmt.Println("\n", stack.Debug())
 		break
 	case "exec":
 		path := argExists(args, 1)
@@ -62,9 +62,8 @@ func main() {
 		} else {
 
 			stack := buildStackFromProject(path)
-
 			output, _ := stack.Execute()
-			fmt.Println(output)
+			fmt.Println("\n", output)
 			break
 		}
 
@@ -172,6 +171,9 @@ func buildStackFromProject(path string) interpreter.Stack {
 	progress := 0
 	go ui.ProgressBar(&progress, len(code), "Building")
 	stack.Build(lang, string(code), &progress)
+
+	// Sleep and give the progress bar time to complete
+	time.Sleep(1000)
 
 	return stack
 }
