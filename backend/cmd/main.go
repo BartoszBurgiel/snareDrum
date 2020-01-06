@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"snareDrum/backend/compiler"
+	"snareDrum/backend/concurrency"
 	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/project"
@@ -89,13 +90,7 @@ func main() {
 		// Set off generator and the goroutine and track progress
 		progress := 0
 		go ui.ProgressBar(&progress, len(text), "Generating")
-		code := generator.Generate(lang, text, &progress)
-
-		// Write to file
-		err := ioutil.WriteFile("GEN.sd", code.Bytes(), 0644)
-		if err != nil {
-			fmt.Println(err)
-		}
+		generator.GenerateFile(lang, []byte(text), &progress)
 		break
 	case "translate-file":
 		path := argExists(args, 1)
@@ -121,12 +116,13 @@ func main() {
 
 		// Generate code
 		progress := 0
-		go ui.ProgressBar(&progress, len(content), "Translating")
-		generator.GenerateFile(lang, content, &progress)
+		go ui.ProgressBar(&progress, int(len(content)/1000), "Translating")
+		// generator.GenerateFile(lang, content, &progress)
+		concurrency.RunTranslate(generator.Generate, lang, string(content), &progress)
 		break
 
 	default:
-		fmt.Printf("Unknown argument '%s'", action)
+		fmt.Printf("Unknown argument '%s'\n", action)
 	}
 
 	// Terminate program after all actions
@@ -138,7 +134,7 @@ func main() {
 ROUTINES
 */
 func notEnoughArguments() {
-	fmt.Println("Insufficient number of arguments provided to")
+	fmt.Println("Insufficient number of arguments provided")
 
 	// Terminate Program
 	os.Exit(0)

@@ -67,17 +67,10 @@ func (s *Stack) Clear() {
 
 // Build stack based on the .sd file
 func (s *Stack) Build(lang Lang, program string, progress *int) {
-	// Determine in what way the program should be built
-	if lang.SingleChard {
 
-		s.Register = buildSingeChardRegister(program, lang, s, progress)
-	} else {
+	progSlice := DivideProgram(lang, program)
 
-		// Divide to keywords
-		progSlice := sliceProgram(program)
-
-		s.Register = buildRegister(progSlice, lang, s, progress)
-	}
+	s.Register = BuildRegister(progSlice, lang, s, progress)
 
 	s.Dump()
 }
@@ -110,4 +103,16 @@ func FormatFunctionName(f func(s *Stack) int) string {
 	// Format name of the function
 	functionFormatted := strings.SplitAfter(function, ".")
 	return functionFormatted[1]
+}
+
+// DivideProgram to keywords or single chars
+func DivideProgram(lang Lang, program string) (progSlice []string) {
+	// Determine in what way the program should be built
+	if lang.SingleChard {
+		progSlice = stringToStringSlice(program)
+	} else {
+		// Divide to keywords
+		progSlice = sliceProgram(program)
+	}
+	return progSlice
 }
