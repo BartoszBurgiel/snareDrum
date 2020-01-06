@@ -30,7 +30,7 @@ func writeLineToFile(data []byte, file *os.File) error {
 // of the program that prints fiven progOutput
 // returns an empty string in order to be implemented in
 // GenerateWithProgressBar
-func GenerateFile(lang interpreter.Lang, progOutput string, progress *int) string {
+func GenerateFile(lang interpreter.Lang, progOutput []byte, progress *int) string {
 	out := bytes.Buffer{}
 
 	file, err := os.Create("GENERATED.sd")

@@ -1,13 +1,14 @@
 package generator
 
 import (
+	"bytes"
 	"snareDrum/backend/interpreter"
 )
 
 // Generate a program printing ani giving string
 // in any given language
-func Generate(lang interpreter.Lang, progOutput string, progress *int) string {
-	out := ""
+func Generate(lang interpreter.Lang, progOutput string, progress *int) *bytes.Buffer {
+	out := bytes.Buffer{}
 
 	// Optimizing variables
 	var nextCharSame, manuallyAddToCell, addToCell bool
@@ -20,8 +21,8 @@ func Generate(lang interpreter.Lang, progOutput string, progress *int) string {
 		iterations, incrPI, leftover := calcWalkerLoop(getASCIIValue(progOutput[i]))
 
 		// Write the walker loop to get to a certain value
-		out += walkerLoopAdd(iterations, incrPI, lang)
-		out += handleLeftoverAdd(leftover, lang)
+		out.WriteString(walkerLoopAdd(iterations, incrPI, lang))
+		out.WriteString(handleLeftoverAdd(leftover, lang))
 
 		// If next char valid
 		if i < len(progOutput)-1 {
@@ -31,26 +32,26 @@ func Generate(lang interpreter.Lang, progOutput string, progress *int) string {
 		}
 
 		// Print value
-		out += reprint(lang)
+		out.WriteString(reprint(lang))
 
 		// If next char is same -> print again
 		if nextCharSame {
 			// Print value
-			out += reprint(lang)
+			out.WriteString(reprint(lang))
 			// Jump to the next char
 			i++
 
 		} else if manuallyAddToCell {
-			out += adjustCellValue(addToCell, charDiff, lang)
-			out += reprint(lang)
+			out.WriteString(adjustCellValue(addToCell, charDiff, lang))
+			out.WriteString(reprint(lang))
 			i++
 		}
 
 		// Move pointer up
-		out += lang.Pointer.Up
-		out += whiteSpace(lang)
+		out.WriteString(lang.Pointer.Up)
+		out.WriteString(whiteSpace(lang))
 
 	}
 
-	return out
+	return &out
 }

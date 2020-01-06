@@ -1,6 +1,9 @@
 package compiler
 
 import (
+	"bytes"
+	"fmt"
+	"os"
 	"snareDrum/backend/interpreter"
 )
 
@@ -18,8 +21,36 @@ func Compile(s interpreter.Stack, progress *int) []byte {
 	return out
 }
 
+// CompileAndWrite the binary to a file
+func CompileAndWrite(s interpreter.Stack, path string, progress *int) error {
+
+	// Open the file
+	out := bytes.Buffer{}
+
+	file, err := os.Create("GENERATED.sd")
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	defer file.Close()
+
+	// Iterate over stack's register
+	for _, fun := range s.Register.Methods {
+		*progress++
+		out.Write(FunctionToBinary(fun))
+	}
+
+	// Write to file
+	file.Write(out.Bytes())
+
+	// Flush the buffer
+	out.Reset()
+
+	return nil
+}
+
 // Execute the code of a given .sdexe file
-func Execute(binary []byte) string {
+func Execute(binary []byte) *bytes.Buffer {
 	// tokenize the given binary code
 	tokenizedCode := tokenize(binary)
 

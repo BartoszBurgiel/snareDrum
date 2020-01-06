@@ -28,12 +28,14 @@ func main() {
 		// Build stack
 		stack := buildStackFromProject(path)
 
+		// Compile and write off
 		progress := 0
+		compiler.CompileAndWrite(stack, path, &progress)
 		go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
-		bin := compiler.Compile(stack, &progress)
 
-		// Write off
-		writeOff(path, bin)
+		// Sleep and give let the progress bar finnish
+		time.Sleep(1000)
+
 		break
 	case "debug":
 		path := argExists(args, 1)
@@ -57,13 +59,15 @@ func main() {
 			}
 			// Execute file
 			output := compiler.Execute(code)
-			fmt.Println(output)
+			fmt.Println("\n", output.String())
+			output.Reset()
 			break
 		} else {
 
 			stack := buildStackFromProject(path)
 			output, _ := stack.Execute()
-			fmt.Println("\n", output)
+			fmt.Println("\n", output.String())
+			output.Reset()
 			break
 		}
 
@@ -88,7 +92,7 @@ func main() {
 		code := generator.Generate(lang, text, &progress)
 
 		// Write to file
-		err := ioutil.WriteFile("GEN.sd", []byte(code), 0644)
+		err := ioutil.WriteFile("GEN.sd", code.Bytes(), 0644)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -118,7 +122,7 @@ func main() {
 		// Generate code
 		progress := 0
 		go ui.ProgressBar(&progress, len(content), "Translating")
-		generator.GenerateFile(lang, string(content), &progress)
+		generator.GenerateFile(lang, content, &progress)
 		break
 
 	default:

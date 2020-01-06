@@ -1,6 +1,7 @@
 package interpreter
 
 import (
+	"bytes"
 	"reflect"
 	"runtime"
 	"strings"
@@ -84,7 +85,7 @@ func (s *Stack) Build(lang Lang, program string, progress *int) {
 // Execute and call all functions of the register
 // And return the output of the program
 // and calls -> names of all called functions
-func (s *Stack) Execute() (output string, funcCalls []string) {
+func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 
 	for _, f := range s.Register.Methods {
 
@@ -95,7 +96,7 @@ func (s *Stack) Execute() (output string, funcCalls []string) {
 		v := f(s)
 
 		// Add to output
-		output += string(byte(v))
+		output.WriteByte(byte(v))
 	}
 
 	return output, funcCalls
