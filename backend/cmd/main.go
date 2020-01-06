@@ -30,8 +30,8 @@ func main() {
 
 		// Compile and write off
 		progress := 0
-		compiler.CompileAndWrite(stack, path, &progress)
 		go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
+		compiler.CompileAndWrite(stack, path, &progress)
 
 		// Sleep and give let the progress bar finnish
 		time.Sleep(1000)

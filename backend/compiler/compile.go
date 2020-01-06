@@ -35,9 +35,14 @@ func CompileAndWrite(s interpreter.Stack, path string, progress *int) error {
 	defer file.Close()
 
 	// Iterate over stack's register
-	for _, fun := range s.Register.Methods {
+	for i, fun := range s.Register.Methods {
 		*progress++
 		out.Write(FunctionToBinary(fun))
+
+		// Add whitespace
+		if i > 0 && i%20 == 0 {
+			out.WriteByte('\n')
+		}
 	}
 
 	// Write to file
