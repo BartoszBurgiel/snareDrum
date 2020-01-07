@@ -13,7 +13,7 @@ import (
 // RunTranslate file concurrently
 func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buffer, lang interpreter.Lang, progOutput string) {
 	// Divide to packages
-	packages := divideToPackages([]byte(progOutput))
+	packages := DivideToPackages([]byte(progOutput))
 	length := len(packages)
 
 	// Processed packages will be appended into this slice
@@ -24,6 +24,8 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buff
 	// Here will all prcessed packages land
 	pPack := make(chan ProcessedMaterial, 10000)
 
+	fmt.Println("Creating the goroutines...")
+	operationTimestamp := time.Now()
 	// Fire go routines
 	for i, pack := range packages {
 
@@ -44,8 +46,13 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buff
 			wg.Done()
 			// *progress++
 		}(i, pack, pPack, &wg)
+
+		// Print the progress bar
+		ui.PrintProgressBar(i, length-1, operationTimestamp)
+		operationTimestamp = time.Now()
 	}
 
+	fmt.Println("\nTranslating...")
 	// Progress bar
 	go func() {
 		operationTimestamp := time.Now()
@@ -86,7 +93,7 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buff
 	fmt.Println("\nWriting off...")
 
 	length = len(processedPackages)
-	operationTimestamp := time.Now()
+	operationTimestamp = time.Now()
 	for i, pack := range processedPackages {
 		// Write data to file
 		_, err := file.Write(pack.Content.(*bytes.Buffer).Bytes())
@@ -105,5 +112,4 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buff
 		operationTimestamp = time.Now()
 
 	}
-	fmt.Println("")
 }

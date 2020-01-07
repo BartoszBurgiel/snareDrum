@@ -9,6 +9,7 @@ import (
 	"snareDrum/backend/generator"
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/project"
+	"snareDrum/backend/ui"
 	"strings"
 	"time"
 )
@@ -33,16 +34,20 @@ func main() {
 		// go ui.ProgressBar(&progress, len(stack.Register.Methods), "Compiling")
 		compiler.CompileAndWrite(stack, path, &progress)
 
-		// Sleep and give let the progress bar finnish
-		time.Sleep(1000)
-
 		break
 	case "debug":
 		path := argExists(args, 1)
 		stack := buildStackFromProject(path)
 		stack.Execute()
 
-		fmt.Println("\n", stack.Debug())
+		// Get debug table
+		debugTable := stack.Debug()
+
+		// Write debug table to file
+		writeOff("debug.txt", debugTable.Bytes())
+
+		// Flush
+		debugTable.Reset()
 		break
 	case "exec":
 		path := argExists(args, 1)
@@ -114,7 +119,6 @@ func main() {
 		}
 
 		// Generate code
-		fmt.Println("Translating...")
 		concurrency.RunTranslate(generator.Generate, lang, string(content))
 		break
 
@@ -175,9 +179,38 @@ func buildStackFromProject(path string) interpreter.Stack {
 
 // write off the given contents into a file
 func writeOff(path string, content []byte) {
-	err := ioutil.WriteFile(project.GetName(path)+".sdexe", content, 0644)
+	// Write off to file
+	file, err := os.Create(path)
 	if err != nil {
 		fmt.Println(err)
+	}
+	defer file.Close()
+
+	dividedContent := concurrency.DivideToPackages(content)
+
+	fmt.Println("\nWriting off...")
+
+	length := len(dividedContent)
+	operationTimestamp := time.Now()
+
+	// Iterate over divided content
+	for i, pack := range dividedContent {
+		// Write data to file
+		_, err := file.Write(pack.Bytes())
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		// Save
+		err = file.Sync()
+		if err != nil {
+			fmt.Println(err)
+		}
+		ui.PrintProgressBar(i, length-1, operationTimestamp)
+
+		// Define new operation time stamp after one operation
+		operationTimestamp = time.Now()
+
 	}
 }
 

@@ -2,12 +2,17 @@ package concurrency
 
 import (
 	"bytes"
+	"fmt"
+	"snareDrum/backend/ui"
+	"time"
 )
 
-// Divide given material into packages each containing 1000 bytes
-func divideToPackages(material []byte) (out []*bytes.Buffer) {
+// DivideToPackages given material into packages each containing 1000 bytes
+func DivideToPackages(material []byte) (out []*bytes.Buffer) {
 	length := len(material)
 
+	fmt.Println("\nDivide to packages...")
+	operationTimestamp := time.Now()
 	// Iterate over material and create packages
 	for i := 0; i <= int(length/10000); i++ {
 		// If there's a leftover
@@ -16,7 +21,10 @@ func divideToPackages(material []byte) (out []*bytes.Buffer) {
 		} else {
 			out = append(out, bytes.NewBuffer(material[i*10000:length]))
 		}
+		ui.PrintProgressBar(i, int(length/10000), operationTimestamp)
+		operationTimestamp = time.Now()
 	}
+	fmt.Printf("\n")
 	return out
 }
 

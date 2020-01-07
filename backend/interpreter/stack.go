@@ -86,6 +86,8 @@ func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 	output = &bytes.Buffer{}
 	max := len(s.Register.Methods)
 
+	//opTime := []int{}
+
 	operationTimestamp := time.Now()
 	fmt.Println("Executing...")
 	for i, f := range s.Register.Methods {
@@ -98,21 +100,33 @@ func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 
 		// Add to output
 		output.WriteByte(byte(v))
-		ui.PrintProgressBar(i, max, operationTimestamp)
+		//opTime = append(opTime, int(time.Second/time.Now().Sub(operationTimestamp)))
+		ui.PrintProgressBar(i, max-1, operationTimestamp)
 		operationTimestamp = time.Now()
 
 	}
+
+	// min, max, avr := 999999999, 0, 0.0
+	// for _, as := range opTime {
+	// 	if as < min {
+	// 		min = as
+	// 	}
+	// 	if as > max {
+	// 		max = as
+	// 	}
+	// 	avr += float64(as) * float64(1.0/float64(len(opTime)))
+
+	// }
+	// fmt.Printf("\n\nmin:%d max:%d avr:%f", min, max, avr)
 
 	return output, funcCalls
 }
 
 // FormatFunctionName and return it as string
 func FormatFunctionName(f func(s *Stack) int) string {
-	// Get the name of the function
-	function := runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name()
 
-	// Format name of the function
-	functionFormatted := strings.SplitAfter(function, ".")
+	// Get and Format name of the function
+	functionFormatted := strings.SplitAfter(runtime.FuncForPC(reflect.ValueOf(f).Pointer()).Name(), ".")
 	return functionFormatted[1]
 }
 
