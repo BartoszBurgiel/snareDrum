@@ -20,11 +20,14 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 
 	var wg sync.WaitGroup
 
+	// Here will all prcessed packages land
+	pPack := make(chan ProcessedMaterial, 10000)
+
 	// Fire go routines
 	for i, pack := range packages {
 
 		wg.Add(1)
-		go func(index int, material *bytes.Buffer, processedPackages *[]ProcessedMaterial, wg *sync.WaitGroup) {
+		go func(index int, material *bytes.Buffer, processedPackages chan ProcessedMaterial, wg *sync.WaitGroup) {
 
 			// Dummy progress for gen function
 			dummyProgress := 0
@@ -37,23 +40,28 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 			}
 
 			// Append
-			*processedPackages = append(*processedPackages, processed)
+			processedPackages <- processed
 			wg.Done()
 			// *progress++
-		}(i, pack, &processedPackages, &wg)
+		}(i, pack, pPack, &wg)
 	}
 
 	// Progress bar
 	go func() {
 		for {
-			ui.PrintProgressBar(len(processedPackages), length-1)
-			if len(processedPackages) == length {
+			ui.PrintProgressBar(len(pPack), length-1)
+			if len(pPack) == length {
 				return
 			}
 		}
 	}()
 	wg.Wait()
-	fmt.Println("\nTranslating done")
+
+	// Fetch processed Packages from channel
+	for i := 0; i < len(pPack); i++ {
+		processedPackages = append(processedPackages, <-pPack)
+	}
+
 	// Sort processed packages
 	sort(processedPackages)
 
@@ -64,10 +72,10 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 	}
 	defer file.Close()
 
-	fmt.Println("Writing off...")
+	fmt.Println("\nWriting off...")
 
+	length = len(processedPackages)
 	for i, pack := range processedPackages {
-		ui.PrintProgressBar(i, length)
 		// Write data to file
 		_, err := file.Write(pack.Content.(*bytes.Buffer).Bytes())
 		if err != nil {
@@ -79,5 +87,7 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 		if err != nil {
 			fmt.Println(err)
 		}
+		ui.PrintProgressBar(i, length-1)
 	}
+	fmt.Println("")
 }
