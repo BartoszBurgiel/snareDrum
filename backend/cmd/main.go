@@ -114,11 +114,8 @@ func main() {
 		}
 
 		// Generate code
-		progress := 0
-		// go ui.ProgressBar(&progress, int(len(content)/1000), "Translating")
-		// generator.GenerateFile(lang, content, &progress)
 		fmt.Println("Translating...")
-		concurrency.RunTranslate(generator.Generate, lang, string(content), &progress)
+		concurrency.RunTranslate(generator.Generate, lang, string(content))
 		break
 
 	default:

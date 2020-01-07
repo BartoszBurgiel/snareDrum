@@ -2,10 +2,11 @@ package ui
 
 import (
 	"fmt"
+	"time"
 )
 
 // PrintProgressBar returns string with a progress bar in ascii with the progress in %
-func PrintProgressBar(curr, max int) {
+func PrintProgressBar(curr, max int, dur time.Time) {
 	out := "["
 
 	// Map ratio of curr to max to width
@@ -18,7 +19,9 @@ func PrintProgressBar(curr, max int) {
 		}
 	}
 	out += "]"
-	out += fmt.Sprintf("%d%% (%d/%d)", int(100*(float64(curr)/float64(max))), curr, max)
+
+	opsPerSecond := time.Second / time.Now().Sub(dur)
+	out += fmt.Sprintf("%d%% (%d/%d) %dops/s               ", int(100*(float64(curr)/float64(max))), curr, max, opsPerSecond)
 
 	fmt.Printf("%s\r", out)
 

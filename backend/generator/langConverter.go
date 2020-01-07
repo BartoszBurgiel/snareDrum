@@ -7,7 +7,7 @@ import (
 
 // Generate a program printing ani giving string
 // in any given language
-func Generate(lang interpreter.Lang, progOutput string, progress *int) *bytes.Buffer {
+func Generate(lang interpreter.Lang, progOutput string) *bytes.Buffer {
 	out := bytes.Buffer{}
 
 	// Optimizing variables
@@ -15,7 +15,6 @@ func Generate(lang interpreter.Lang, progOutput string, progress *int) *bytes.Bu
 	var charDiff int
 
 	for i := 0; i < len(progOutput); i++ {
-		*progress = i
 
 		// claculate walkerLoop value
 		iterations, incrPI, leftover := calcWalkerLoop(getASCIIValue(progOutput[i]))

@@ -77,25 +77,15 @@ func Execute(binary []byte) *bytes.Buffer {
 func tokenize(code []byte) [][]byte {
 	out := [][]byte{}
 
-	// Counter of the length of the token
-	// purpousedly don't use the for loop's iterator
-	// because it's easier
-	ind := 0
-
 	// Temporary token
 	tempToken := []byte{}
 
 	// Iterate over code
-	for _, b := range code {
+	for i, b := range code {
 
 		tempToken = append(tempToken, b)
-		ind++
 
-		if ind == 4 {
-			// reset index
-			ind = 0
-
-			// add to out
+		if i%4 == 0 && i > 0 {
 			out = append(out, tempToken)
 
 			// reset temptoken

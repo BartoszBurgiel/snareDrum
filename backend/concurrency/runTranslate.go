@@ -7,10 +7,11 @@ import (
 	"snareDrum/backend/interpreter"
 	"snareDrum/backend/ui"
 	"sync"
+	"time"
 )
 
 // RunTranslate file concurrently
-func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *int) *bytes.Buffer, lang interpreter.Lang, progOutput string, progress *int) {
+func RunTranslate(gen func(lang interpreter.Lang, progOutput string) *bytes.Buffer, lang interpreter.Lang, progOutput string) {
 	// Divide to packages
 	packages := divideToPackages([]byte(progOutput))
 	length := len(packages)
@@ -30,8 +31,7 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 		go func(index int, material *bytes.Buffer, processedPackages chan ProcessedMaterial, wg *sync.WaitGroup) {
 
 			// Dummy progress for gen function
-			dummyProgress := 0
-			cont := gen(lang, material.String(), &dummyProgress)
+			cont := gen(lang, material.String())
 
 			// Build processed struct
 			processed := ProcessedMaterial{
@@ -48,8 +48,19 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 
 	// Progress bar
 	go func() {
+		operationTimestamp := time.Now()
+		// tempLen := 0
 		for {
-			ui.PrintProgressBar(len(pPack), length-1)
+			// only if size is reasonable to display progress
+			if length-1 > 4 {
+
+				// If len pPack changed
+				ui.PrintProgressBar(len(pPack), length-1, operationTimestamp)
+				// operationTimestamp = time.Now()
+
+				// tempLen = len(pPack)
+
+			}
 			if len(pPack) == length {
 				return
 			}
@@ -75,6 +86,7 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 	fmt.Println("\nWriting off...")
 
 	length = len(processedPackages)
+	operationTimestamp := time.Now()
 	for i, pack := range processedPackages {
 		// Write data to file
 		_, err := file.Write(pack.Content.(*bytes.Buffer).Bytes())
@@ -87,7 +99,11 @@ func RunTranslate(gen func(lang interpreter.Lang, progOutput string, progress *i
 		if err != nil {
 			fmt.Println(err)
 		}
-		ui.PrintProgressBar(i, length-1)
+		ui.PrintProgressBar(i, length-1, operationTimestamp)
+
+		// Define new operation time stamp after one operation
+		operationTimestamp = time.Now()
+
 	}
 	fmt.Println("")
 }

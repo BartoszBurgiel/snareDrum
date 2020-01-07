@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"snareDrum/backend/ui"
 	"strings"
+	"time"
 )
 
 // Stack struct represents a stack with all actions of a program and their order
@@ -85,6 +86,7 @@ func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 	output = &bytes.Buffer{}
 	max := len(s.Register.Methods)
 
+	operationTimestamp := time.Now()
 	fmt.Println("Executing...")
 	for i, f := range s.Register.Methods {
 
@@ -96,7 +98,9 @@ func (s *Stack) Execute() (output *bytes.Buffer, funcCalls []string) {
 
 		// Add to output
 		output.WriteByte(byte(v))
-		ui.PrintProgressBar(i, max)
+		ui.PrintProgressBar(i, max, operationTimestamp)
+		operationTimestamp = time.Now()
+
 	}
 
 	return output, funcCalls
